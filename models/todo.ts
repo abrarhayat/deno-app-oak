@@ -4,11 +4,14 @@ import { getDB } from "../utils/db_utils.ts";
 
 class Todo extends Model {
   static fields = {
-    _id: {
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
       primaryKey: true,
     },
     text: DataTypes.STRING,
   };
+  static table = "todo";
 }
 const db = getDB();
 try {

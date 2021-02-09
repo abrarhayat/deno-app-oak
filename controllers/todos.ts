@@ -7,67 +7,52 @@ type Body = {
 };
 
 export const getAllTodos = async (ctx: RouterContext) => {
-  try {
-    const todos = await Todo.all();
-    //console.log("todos", todos);
-    const tranformedTodos = todos.map((todo: any) => {
-      return {
-        _id: todo._id.toString(),
-        text: todo.text,
-      };
-    });
-
-    ctx.response.body = {
-      message: "All todos retrieved successfully!",
-      todos: tranformedTodos,
+  const todos = await Todo.all();
+  //console.log("todos", todos);
+  const tranformedTodos = todos.map((todo) => {
+    return {
+      id: todo.id,
+      text: todo.text,
     };
-  } catch (err) {
-    console.log(err);
-  }
+  });
+
+  ctx.response.body = {
+    message: "All todos retrieved successfully!",
+    todos: tranformedTodos,
+  };
 };
 
 export const createNewTodo = async (ctx: RouterContext) => {
-  try {
-    const body: Body = await ctx.request.body().value;
-    const todo = {
-      text: body.text,
-    };
-    const result = await Todo.create(todo);
-    console.log(result);
-    ctx.response.body = {
-      message: "Created todo successfully!",
-      todo: result,
-    };
-  } catch (err) {
-    console.log(err);
-  }
+  const body: Body = await ctx.request.body().value;
+  const result = await Todo.create({
+    text: body.text,
+  });
+  console.log(result);
+  const todo = { text: body.text, id: result.lastInsertId as string };
+  ctx.response.body = {
+    message: "Created todo successfully!",
+    todo: todo,
+  };
 };
 
 export const updateTodo = async (ctx: RouterContext) => {
-  try {
-    const todoId = ctx.params.todoId as string;
-    const body: Body = await ctx.request.body().value;
-    const updatedTodo = await Todo.where("_id", todoId.toString()).update(
-      "text",
-      body.text
-    );
-    ctx.response.body = {
-      message: "Updated todo successfully!",
-      todo: updatedTodo,
-    };
-  } catch (err) {
-    console.log(err);
-  }
+  const todoId = ctx.params.todoId as string;
+  const body: Body = await ctx.request.body().value;
+  const result = await Todo.where("id", todoId).update("text", body.text);
+  console.log(result);
+  const updatedTodo = { text: body.text, id: todoId };
+  ctx.response.body = {
+    message: "Updated todo successfully!",
+    todo: updatedTodo,
+  };
 };
 
 export const deleteTodo = async (ctx: RouterContext) => {
-  try {
-    const todoId = ctx.params.todoId;
-    const result = await Todo.deleteById(todoId as string);
-    ctx.response.body = {
-      message: "Deleted todo successfully!",
-    };
-  } catch (err) {
-    console.log(err);
-  }
+  const todoId = ctx.params.todoId;
+  console.log(todoId);
+  const result = await Todo.where("id", todoId as string).delete();
+  console.log(result);
+  ctx.response.body = {
+    message: "Deleted todo successfully!",
+  };
 };
