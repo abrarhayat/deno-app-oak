@@ -1,13 +1,25 @@
-import { Todo } from "../models/todo.ts";
 import { RouterContext } from "https://deno.land/x/oak/mod.ts";
 
-let todos: Todo[] = [];
+import Todo from "../models/todo.ts";
 
-export const getAllTodos = (ctx: RouterContext) => {
+type Body = {
+  text: string;
+};
+
+export const getAllTodos = async (ctx: RouterContext) => {
   try {
+    const todos = await Todo.all();
+    //console.log("todos", todos);
+    const tranformedTodos = todos.map((todo: any) => {
+      return {
+        _id: todo._id.toString(),
+        text: todo.text,
+      };
+    });
+
     ctx.response.body = {
       message: "All todos retrieved successfully!",
-      todos: todos,
+      todos: tranformedTodos,
     };
   } catch (err) {
     console.log(err);
@@ -16,16 +28,15 @@ export const getAllTodos = (ctx: RouterContext) => {
 
 export const createNewTodo = async (ctx: RouterContext) => {
   try {
-    const body = await ctx.request.body().value;
-    const todo: Todo = {
-      id: new Date().toISOString(),
+    const body: Body = await ctx.request.body().value;
+    const todo = {
       text: body.text,
     };
-    todos.push(todo);
+    const result = await Todo.create(todo);
+    console.log(result);
     ctx.response.body = {
       message: "Created todo successfully!",
-      todo: todo,
-      todos: todos,
+      todo: result,
     };
   } catch (err) {
     console.log(err);
@@ -34,55 +45,27 @@ export const createNewTodo = async (ctx: RouterContext) => {
 
 export const updateTodo = async (ctx: RouterContext) => {
   try {
-    const todoId = ctx.params.todoId;
-    const body = await ctx.request.body().value;
-    if (todos.length === 0) {
-      ctx.response.body = {
-        message: "No todos found!",
-      };
-      return;
-    }
-    const updatedTodoIndex = todos.findIndex((todo) => todo.id === todoId);
-    if (updatedTodoIndex < 0) {
-      ctx.response.body = {
-        message: "No todo found with ID!",
-      };
-      return;
-    }
-    todos[updatedTodoIndex] = {
-      id: todos[updatedTodoIndex].id,
-      text: body.text,
-    };
+    const todoId = ctx.params.todoId as string;
+    const body: Body = await ctx.request.body().value;
+    const updatedTodo = await Todo.where("_id", todoId.toString()).update(
+      "text",
+      body.text
+    );
     ctx.response.body = {
       message: "Updated todo successfully!",
-      todo: todos[updatedTodoIndex],
-      todos: todos,
+      todo: updatedTodo,
     };
   } catch (err) {
     console.log(err);
   }
 };
 
-export const deleteTodo = (ctx: RouterContext) => {
+export const deleteTodo = async (ctx: RouterContext) => {
   try {
     const todoId = ctx.params.todoId;
-    if (todos.length === 0) {
-      ctx.response.body = {
-        message: "No todos found!",
-      };
-      return;
-    }
-    const deletedTodoIndex = todos.findIndex((todo) => todo.id === todoId);
-    if (deletedTodoIndex < 0) {
-      ctx.response.body = {
-        message: "No todo found with ID!",
-      };
-      return;
-    }
-    todos = todos.filter((todo) => todo.id !== todoId);
+    const result = await Todo.deleteById(todoId as string);
     ctx.response.body = {
       message: "Deleted todo successfully!",
-      todos: todos,
     };
   } catch (err) {
     console.log(err);

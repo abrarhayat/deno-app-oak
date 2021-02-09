@@ -2,6 +2,10 @@ import { Application } from "https://deno.land/x/oak@v6.5.0/mod.ts";
 
 import todosRoutes from "./routes/todo.ts";
 
+import { connect } from "./utils/db_utils.ts";
+
+connect();
+
 const app = new Application();
 
 app.use(async (ctx, next) => {
