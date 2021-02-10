@@ -5,6 +5,18 @@ import todosRoutes from "./routes/todo.ts";
 const app = new Application();
 
 app.use(async (ctx, next) => {
+  try {
+    await next();
+  } catch (err) {
+    console.log(err);
+    ctx.response.body = {
+      message: "Your request could not be processed!",
+    };
+    ctx.response.status = 500;
+  }
+});
+
+app.use(async (ctx, next) => {
   const responseHeaders = ctx.response.headers;
   responseHeaders.set("Access-Control-Allow-Origin", "*");
   responseHeaders.set(
