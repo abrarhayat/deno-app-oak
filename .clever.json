@@ -1,0 +1,11 @@
+{
+  "apps": [
+    {
+      "app_id": "app_fbcaedcb-5b88-41e8-bc33-286ee1860572",
+      "org_id": "user_b6e27cec-a59a-483a-9c1a-bb99c7fb810c",
+      "deploy_url": "https://push-n2-par-clevercloud-customers.services.clever-cloud.com/app_fbcaedcb-5b88-41e8-bc33-286ee1860572.git",
+      "name": "denoOakAbrar",
+      "alias": "denoOakAbrar"
+    }
+  ]
+}
