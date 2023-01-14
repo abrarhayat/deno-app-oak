@@ -2,7 +2,7 @@
   "name": "deno-app-oak",
   "version": "1.0.0",
   "description": "A Deno app built with OAK",
-  "main": "app.js",
+  "main": "app.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
