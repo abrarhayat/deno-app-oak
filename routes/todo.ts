@@ -8,6 +8,12 @@ import {
 
 const router = new Router();
 
+router.get("/", async (ctx: RouterContext) => {
+  ctx.response.body = {
+    message: "Hit this route: /todos",
+  };
+});
+
 router.get("/todos", getAllTodos);
 
 router.post("/todo", createNewTodo);
