@@ -4,6 +4,7 @@
   "description": "A Deno app built with OAK",
   "main": "app.ts",
   "scripts": {
+    "start": "/home/bas/.deno/bin/deno run --allow-read --allow-env --allow-net app.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
